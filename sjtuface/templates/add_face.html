@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+<form action='/upload' method='post' enctype='multipart/form-data'>
+    <label for="person_name">姓名</label>
+    <input type="text" id="person_name">
+    <br/>
+    <label for="photo_1">添加照片</label>
+    <input type="file" accept="image/*" id="photo_1">
+    <br/>
+    <input type="submit" value="提交">
+</form>
+{% endblock %}

@@ -81,3 +81,11 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+@app.route('/person')
+def manage_person():
+    return render_template('person.html')
+
+@app.route('/add_face')
+def add_face():
+    return render_template('add_face.html')
