@@ -1,0 +1,13 @@
+body{
+    background-size: cover;
+    background-image: url(../static/background.jpg);
+    text-align: center;
+}
+
+.center-window{
+    display: inline-block;
+    vertical-align: middle;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 10%;
+    padding: 30px;
+}

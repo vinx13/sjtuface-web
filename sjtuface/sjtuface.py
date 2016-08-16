@@ -1,8 +1,7 @@
 import os
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
-
+    render_template, flash
 
 # create our little application :)
 app = Flask(__name__)
@@ -82,9 +81,12 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('show_entries'))
 
+
 @app.route('/person')
 def manage_person():
-    return render_template('person.html')
+    fake_people_list = ["奥巴马", "张杰", "谢娜", "傅园慧", "林武威"]
+    return render_template('person.html', people=[{"name": n} for n in fake_people_list])
+
 
 @app.route('/add_face')
 def add_face():
