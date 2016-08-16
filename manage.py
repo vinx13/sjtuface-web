@@ -17,10 +17,10 @@ def create_db():
     db.create_all()
 
 
-@manager.option('-u', '--name', dest='name', default='admin')
+@manager.option('-u', '--name', dest='username', default='admin')
 @manager.option('-p', '--password', dest='password', default='123456')
-def create_user(name, password):
-    admin = User(name, generate_password_hash(password))
+def create_user(username, password):
+    admin = User(username, generate_password_hash(password))
     db.session.add(admin)
     db.session.commit()
 

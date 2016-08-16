@@ -1,8 +1,7 @@
 ## Setup & Run
 ```
 pip install -e .
-export FLASK_APP=sjtuface.sjtuface
-flask run
+python run.py
 ```
 
 ## Database

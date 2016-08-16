@@ -10,7 +10,9 @@ setup(
         'Flask-Login',
         'Flask-Cache',
         'Flask-RESTful',
-        'Flask-Script'
+        'Flask-Script',
+        'Flask-Wtf'
+        'MySQL-python'
     ],
     setup_requires=[
         'pytest-runner',
