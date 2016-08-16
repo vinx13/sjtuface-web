@@ -6,6 +6,11 @@ setup(
     include_package_data=True,
     install_requires=[
         'flask',
+        'Flask-SQLAlchemy',
+        'Flask-Login',
+        'Flask-Cache',
+        'Flask-RESTful',
+        'Flask-Script'
     ],
     setup_requires=[
         'pytest-runner',
