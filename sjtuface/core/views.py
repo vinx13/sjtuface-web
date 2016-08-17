@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort
-from forms import LoginForm, PersonForm
-from flask.ext.login import current_user, login_required, login_user, logout_user
-from models import db, User, Person
+from .forms import LoginForm, PersonForm
+from flask_login import current_user, login_required, login_user, logout_user
+from .models import db, User, Person
 import sqlalchemy
 
 bp = Blueprint('sjtuface', __name__)
