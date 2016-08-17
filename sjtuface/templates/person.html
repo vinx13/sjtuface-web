@@ -1,26 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
     <div class="center-window">
-            <div>
-                {% for person in people %}
-                    <p class="text-center">{{ person.name }}</p>
-                {% else %}
-                    <p class="text-center">此地荒无人烟.....</p>
-                {% endfor %}
+        <div class="person-name-box">
+            {% for person in people %}
+                <div class="person-name-tag">
+                    <p>{{ person.name }}</p>
+                </div>
+            {% else %}
+                <p class="text-center">此地荒无人烟.....</p>
+            {% endfor %}
+        </div>
+
+        <form class="form" method="post" action="/person/add">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                <label for="id">id</label>
+                {{ form.id }}
             </div>
-            <div>
-                    <form class="form" method="post" action="person">
-                        {{ form.csrf_token }}
-                        <div class="form-group">
-                            <label for="id">id</label>
-                            {{ form.id }}
-                        </div>
-                        <div class="form-group">
-                            <label for="name">姓名</label>
-                            {{ form.name }}
-                        </div>
-                        <button type="submit" class="btn btn-default">添加</button>
-                    </form>
+            <div class="form-group">
+                <label for="name">姓名</label>
+                {{ form.name }}
             </div>
+            <button class="btn btn-default" type="submit">添加</button>
+        </form>
     </div>
 {% endblock %}
+
+
+

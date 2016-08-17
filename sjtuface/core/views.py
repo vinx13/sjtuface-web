@@ -29,15 +29,21 @@ def login():
         return redirect(next or url_for('sjtuface.manage_person'))
     return render_template('login.html', form=form)
 
+
 def next_is_valid(next):
-    return True # TODO
+    return True  # TODO
 
 
-@bp.route('/person', methods=['GET','POST'])
+@bp.route('/person', methods=['GET'])
 def manage_person():
-    #fake_people_list = ["奥巴马", "张杰", "谢娜", "傅园慧", "林武威"]
-    people_list = Person.query.all()
+    people_list = Person.query.order_by(Person.id)
+    return render_template('person.html', people=people_list, form=PersonForm())
+
+
+@bp.route('/person/add', methods=['POST'])
+def add_person():
     form = PersonForm(request.form)
+
     if form.validate_on_submit():
         id = form.id.data
         name = form.name.data
@@ -46,13 +52,24 @@ def manage_person():
             db.session.add(person)
             db.session.commit()
         except sqlalchemy.orm.exc.FlushError:
-            flash("dubplicate id")
+            # fixme: when duplication really happens, this cannot catch the error
+            flash("duplicate id")
 
         return redirect(url_for('sjtuface.manage_person'))
-    return render_template('person.html', people=[{"name": person.name} for person in people_list], form=PersonForm())
+    else:
+        abort(406)
+
+
+@bp.route('/person/delete', methods=['POST'])
+def delete_person():
+    # todo
+    did = request.data
+    p = Person.query.filter_by(id=did).first()
+    db.session.delete(p)
+    db.session.commit()
+    return redirect(url_for('sjtuface.manage_person'))
 
 
 @bp.route('/add_face')
 def add_face():
     return render_template('add_face.html')
-
