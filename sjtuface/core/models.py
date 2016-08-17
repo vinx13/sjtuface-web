@@ -31,8 +31,13 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+
 class Person(db.Model):
     __tablename__ = 'person'
 
     id = db.Column(db.Unicode(64), primary_key=True)
     name = db.Column(db.Unicode(64))
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort
-from forms import LoginForm
+from forms import LoginForm, PersonForm
 from flask.ext.login import current_user, login_required, login_user, logout_user
-from sqlalchemy import desc
-from models import db, User
+from models import db, User, Person
+import sqlalchemy
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -33,10 +33,23 @@ def next_is_valid(next):
     return True # TODO
 
 
-@bp.route('/person')
+@bp.route('/person', methods=['GET','POST'])
 def manage_person():
-    fake_people_list = ["奥巴马", "张杰", "谢娜", "傅园慧", "林武威"]
-    return render_template('person.html', people=[{"name": n} for n in fake_people_list])
+    #fake_people_list = ["奥巴马", "张杰", "谢娜", "傅园慧", "林武威"]
+    people_list = Person.query.all()
+    form = PersonForm(request.form)
+    if form.validate_on_submit():
+        id = form.id.data
+        name = form.name.data
+        person = Person(id, name)
+        try:
+            db.session.add(person)
+            db.session.commit()
+        except sqlalchemy.orm.exc.FlushError:
+            flash("dubplicate id")
+
+        return redirect(url_for('sjtuface.manage_person'))
+    return render_template('person.html', people=[{"name": person.name} for person in people_list], form=PersonForm())
 
 
 @bp.route('/add_face')

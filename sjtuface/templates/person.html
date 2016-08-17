@@ -9,14 +9,15 @@
                 {% endfor %}
             </div>
             <div>
-                    <form class="form" method="post" action="/api/person">
+                    <form class="form" method="post" action="person">
+                        {{ form.csrf_token }}
                         <div class="form-group">
                             <label for="id">id</label>
-                            <input type="text" id="id">
+                            {{ form.id }}
                         </div>
                         <div class="form-group">
                             <label for="name">姓名</label>
-                            <input type="text" id="name">
+                            {{ form.name }}
                         </div>
                         <button type="submit" class="btn btn-default">添加</button>
                     </form>

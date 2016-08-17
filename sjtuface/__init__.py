@@ -1,6 +1,11 @@
 from flask import Flask, session, request, abort
 from core.models import db
 from flask.ext.login import LoginManager
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config')
@@ -27,9 +32,8 @@ def register_database(app):
 def register_blueprint(app):
     from core.views import bp
     app.register_blueprint(bp, url_prefix='')
-    #from core.api import api
-    #app.register_blueprint(api, url_prefix='/api')
-
+    from core.api import api
+    #api.init_app(app)
 
 # Initialize flask-login
 def init_login(app):
