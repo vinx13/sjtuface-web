@@ -11,7 +11,7 @@ setup(
         'Flask-Cache',
         'Flask-RESTful',
         'Flask-Script',
-        'Flask-Wtf'
+        'Flask-Wtf',
         'MySQL-python'
     ],
     setup_requires=[
