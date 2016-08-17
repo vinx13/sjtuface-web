@@ -2,9 +2,8 @@
 # coding: utf-8
 from flask.ext.script import Manager
 from sjtuface import create_app
-from sjtuface.core.models import db, User
+from sjtuface.core.models import db, User, Person
 from werkzeug.security import generate_password_hash
-
 
 app = create_app()
 
@@ -22,6 +21,17 @@ def create_db():
 def create_user(username, password):
     admin = User(username, generate_password_hash(password))
     db.session.add(admin)
+    db.session.commit()
+
+
+@manager.command
+def seed():
+    for p in Person.query.all():
+        db.session.delete(p)
+    names = ["傅园慧", "宁泽涛", "张继科", "张梦雪", "林武威",
+             "Obama", "Hitler", "Hillary", "Jobs"]
+    person_list = [Person(i, n) for i, n in zip(range(len(names)), names)]
+    db.session.add_all(person_list)
     db.session.commit()
 
 
