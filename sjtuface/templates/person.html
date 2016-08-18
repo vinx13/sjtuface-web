@@ -1,17 +1,23 @@
 {% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/person.css') }}">
+{% endblock %}
 {% block body %}
     <div class="center-window">
         <div class="person-name-box">
             {% for person in people %}
                 <div class="person-name-tag">
                     <p>{{ person.name }}</p>
+                    <span class="person-name-tag-delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </span>
                 </div>
             {% else %}
                 <p class="text-center">此地荒无人烟.....</p>
             {% endfor %}
         </div>
 
-        <form class="form" method="post" action="/person/add">
+        <form class="form" method="post" action="{{ url_for("person.add") }}">
             {{ form.csrf_token }}
             <div class="form-group">
                 <label for="id">id</label>
@@ -23,8 +29,21 @@
             </div>
             <button class="btn btn-default" type="submit">添加</button>
         </form>
+
+        <form class="form" method="post" action="{{ url_for("person.delete") }}">
+            <div class="form-group">
+                <label for="id">id</label>
+                <input type="text" name="did">
+            </div>
+            <button class="btn btn-default" type="submit">删除</button>
+        </form>
     </div>
 {% endblock %}
 
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}
 
 

@@ -1,0 +1,74 @@
+.person-name-box {
+    width: 700px;
+    height: 300px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+@media screen and (min-width: 480px) {
+    .person-name-box {
+        width: 400px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .person-name-box {
+        width: 600px;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .person-name-box {
+        width: 700px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .person-name-box {
+        width: 900px;
+    }
+}
+
+.person-name-tag {
+    width: 150px;
+    padding: 10px;
+    margin: 5px 10px;
+    display: inline-block;
+    position: relative;
+
+    color: #000;
+    font-size: 15px;
+
+    background-color: #fdfdfd;
+    border-radius: 5px;
+    border: 1px #59b solid;
+
+    transition: color .2s, background-color .2s, border-color .2s;
+}
+
+.person-name-tag p {
+    text-align: center;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.person-name-tag:hover {
+    color: #fdfdfd;
+    background-color: #59b;
+    border-color: #fdfdfd;
+}
+
+.person-name-tag .person-name-tag-delete {
+    position: absolute;
+    right: 5px;
+    bottom: 3px;
+    opacity: 0;
+    display: none;
+    transition: opacity .2s
+}
+
+.person-name-tag:hover .person-name-tag-delete {
+    display: inline;
+    cursor: pointer;
+    opacity: 1;
+}

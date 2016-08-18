@@ -1,7 +1,10 @@
 <!doctype html>
 <title>Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/bootstrap.css') }}">
+
+{% block styles %}{% endblock %}
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
@@ -9,3 +12,5 @@
 <body>
 {% block body %}{% endblock %}
 </body>
+
+{% block script %}{% endblock %}

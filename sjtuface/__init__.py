@@ -32,8 +32,9 @@ def register_database(app):
 
 
 def register_blueprint(app):
-    from .core.views import bp
-    app.register_blueprint(bp, url_prefix='')
+    from .views import __bps__
+    for bp in __bps__:
+        app.register_blueprint(bp)
     from .core.api import api
     # api.init_app(app)
 
