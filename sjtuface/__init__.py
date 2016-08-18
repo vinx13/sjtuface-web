@@ -13,6 +13,7 @@ def create_app():
     app.config.from_object('config')
     register_database(app)
     register_blueprint(app)
+    register_api(app)
     init_login(app)
     # create_admin(app, db)
     # init_csrf_protection(app)
@@ -32,11 +33,16 @@ def register_database(app):
 
 
 def register_blueprint(app):
-    from .views import __bps__
-    for bp in __bps__:
-        app.register_blueprint(bp)
-    from .core.api import api
+    from .core.views import bp
+    app.register_blueprint(bp)
+    # from .core.api import api
     # api.init_app(app)
+    # moved to `register api`
+
+
+def register_api(app):
+    from .core.api import api
+    api.init_app(app)
 
 
 # Initialize flask-login

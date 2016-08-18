@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort
 from flask_login import current_user, login_required, login_user, logout_user
-from sjtuface.core.forms import LoginForm
-from sjtuface.core.models import db, User
+from sjtuface.core.forms import LoginForm, PersonForm
+from sjtuface.core.models import db, User, Person
+import sqlalchemy
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -31,3 +32,24 @@ def login():
 
 def next_is_valid(next):
     return True  # TODO
+
+
+@bp.route('/person', methods=['GET', 'POST'])
+def person():
+    people_list = Person.query.order_by(Person.id)
+    form = PersonForm(request.form)
+    flash("aaaaaa")
+    errors = {}
+    if form.validate_on_submit():
+        id = form.id.data
+        name = form.name.data
+        p = Person(id, name)
+        try:
+            db.session.add(p)
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError:
+            db.session.rollback()
+            errors.setdefault("id", []).append("Duplicated id")
+    else:
+        errors = form.errors
+    return render_template('person.html', people=people_list, form=PersonForm(), errors=errors)

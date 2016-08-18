@@ -67,7 +67,8 @@
     transition: opacity .2s
 }
 
-.person-name-tag:hover .person-name-tag-delete {
+.person-name-tag:hover .person-name-tag-delete,
+.person-name-tag:active .person-name-tag-delete {
     display: inline;
     cursor: pointer;
     opacity: 1;
