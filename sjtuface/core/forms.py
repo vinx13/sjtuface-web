@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField, FileField
 from wtforms.validators import DataRequired
 
 
@@ -14,3 +14,6 @@ class PersonForm(Form):
     name = StringField('name', validators=[DataRequired()])
 
 
+class FaceForm(Form):
+    person_id = StringField('id', validators=[DataRequired()])
+    photo = FileField('photo')
