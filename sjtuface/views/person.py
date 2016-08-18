@@ -35,11 +35,11 @@ def add():
 
 @bp_person.route('/delete', methods=['POST'])
 def delete():
-    did = request.form['did']
-    p = Person.query.filter_by(id=did).first()
+    # todo: exception handle
+    id_to_be_del = request.form['id']
+    p = Person.query.filter_by(id=id_to_be_del).first()
     db.session.delete(p)
     db.session.commit()
-    return redirect(url_for('person.index'))
 
 
 @bp_person.route('/add_face')

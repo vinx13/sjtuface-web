@@ -7,13 +7,14 @@
         <div class="person-name-box">
             {% for person in people %}
                 <div class="person-name-tag">
+                    <p class="person-id" hidden>{{ person.id }}</p>
                     <p>{{ person.name }}</p>
                     <span class="person-name-tag-delete">
                         <span class="glyphicon glyphicon-trash"></span>
                     </span>
                 </div>
             {% else %}
-                <p class="text-center">此地荒无人烟.....</p>
+                <div>此地荒无人烟.....</div>
             {% endfor %}
         </div>
 
@@ -29,20 +30,16 @@
             </div>
             <button class="btn btn-default" type="submit">添加</button>
         </form>
-
-        <form class="form" method="post" action="{{ url_for("person.delete") }}">
-            <div class="form-group">
-                <label for="id">id</label>
-                <input type="text" name="did">
-            </div>
-            <button class="btn btn-default" type="submit">删除</button>
-        </form>
     </div>
 {% endblock %}
 
 {% block script %}
     <script>
-
+        $(".person-name-tag-delete").click(function () {
+            var id_to_be_del = $(this).siblings(".person-id").text();
+            $.post("{{ url_for("person.delete") }}", {"id": id_to_be_del});
+            location.reload()
+        });
     </script>
 {% endblock %}
 
