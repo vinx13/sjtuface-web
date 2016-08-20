@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
-from sjtuface.core.forms import LoginForm, PersonForm, FaceForm
+from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm
 from sjtuface.core.models import db, User, Person
 import sqlalchemy
-import os, re, time
+import os, re
+import time
+import hashlib
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -62,33 +64,74 @@ def is_image_file(filename):
     return re.match(r'^.+\.(jpg)$', filename)
 
 
-def create_upload_sub_dir_if_not_exist(pid):
-    if pid not in os.listdir(UPLOAD_DIR):
-        os.mkdir(os.path.join(UPLOAD_DIR, pid))
+def md5_file_name(data):
+    m = hashlib.md5()
+    m.update(data)
+    return m.hexdigest()
 
 
-# TODO:
-# 1. better filename
-# 2. more suffix for image
-# 3. beatification
-@bp.route('/upload', methods=['GET', 'POST'])
-def add_face():
-    form = FaceForm(request.form)
+@bp.route('/person/<string:person_id>', methods=['GET', 'POST'])
+def person_detail(person_id):
+    p = Person.query.filter_by(id=person_id).first()
+    if not p:
+        abort(404)
+
+
+    form = PhotoForm(request.form)
     errors = {}
-    if form.validate_on_submit():
+    if not form.validate_on_submit():
+        errors = form.errors
+    else:
         img = request.files[form.photo.name]
         if not is_image_file(img.filename):
             errors.setdefault(form.photo.name, []).append("Only jpg photo is accepted")
         else:
             pid = form.person_id.data
-            create_upload_sub_dir_if_not_exist(pid)
-            fname = str(time.time()) + ".jpg"
+            try:
+                os.mkdir(os.path.join(UPLOAD_DIR, pid))
+            except OSError:
+                pass
+            fname = md5_file_name(img.read()) + "." + img.filename.split(".", 1)[-1]
+            img.seek(0)
             img.save(os.path.join(UPLOAD_DIR, pid, fname))
-            return redirect(url_for('sjtuface.added_face', person_id=pid, filename=fname))
-    else:
-        errors = form.errors
+    photo_names = os.listdir(os.path.join(UPLOAD_DIR, person_id))
 
-    return render_template('add_face.html', form=FaceForm(), errors=errors)
+    return render_template('person_detail.html', person=p, photo_names=photo_names, form=PhotoForm(), errors=errors)
+
+
+#
+# def is_image_file(filename):
+#     return re.match(r'^.+\.(jpg)$', filename)
+#
+#
+# def md5_file_name(data):
+#     m = hashlib.md5()
+#     m.update(data)
+#     return m.hexdigest()
+#
+#
+# @bp.route('/upload', methods=['GET', 'POST'])
+# def add_face():
+#     form = PhotoForm(request.form)
+#     errors = {}
+#     if not form.validate_on_submit():
+#         errors = form.errors
+#     else:
+#         img = request.files[form.photo.name]
+#         if not is_image_file(img.filename):
+#             errors.setdefault(form.photo.name, []).append("Only jpg photo is accepted")
+#         else:
+#             pid = form.person_id.data
+#             try:
+#                 os.mkdir(os.path.join(UPLOAD_DIR, pid))
+#             except OSError:
+#                 pass
+#             fname = md5_file_name(img.read()) + "." + img.filename.split(".", 1)[-1]
+#             img.seek(0)
+#             img.save(os.path.join(UPLOAD_DIR, pid, fname))
+#             return redirect(url_for('sjtuface.added_face', person_id=pid, filename=fname))
+#
+#     return render_template('add_face.html', form=PhotoForm(), errors=errors)
 
 
 @bp.route('/uploads/<person_id>/<filename>')

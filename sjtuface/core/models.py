@@ -41,3 +41,15 @@ class Person(db.Model):
     def __init__(self, id, name):
         self.id = id
         self.name = name
+
+
+class Photo(db.Model):
+    __tablename__ = 'photo'
+
+    filename = db.Column(db.Unicode(64), primary_key=True)
+    owner_id = db.Column(db.Unicode(64), db.ForeignKey('person.id'))
+    owner = db.relationship(Person, backref=db.backref('photos'))
+
+    def __init__(self, filename, owner):
+        self.filename = filename
+        self.owner = owner

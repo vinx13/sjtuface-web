@@ -14,6 +14,6 @@ class PersonForm(Form):
     name = StringField('name', validators=[DataRequired()])
 
 
-class FaceForm(Form):
+class PhotoForm(Form):
     person_id = StringField('id', validators=[DataRequired()])
     photo = FileField('photo')

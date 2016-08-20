@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/person_detail.css') }}">
+{% endblock %}
+{% block body %}
+    <div class="center-window">
+        <div>
+            <p>id: {{ person.id }}</p>
+            <p>name: {{ person.name }}</p>
+        </div>
+        <div class="person-name-box">
+            {{ errors.person_id }}
+            {{ errors.photo }}
+            {% for name in photo_names %}
+                <div class="photo-thumbnail">
+                    <img src="{{ url_for('static',filename='/'.join(['uploads',person.id,name])) }}">
+                    <span class="photo-name" hidden>{{ name }}</span>
+                    <span class="photo-delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </span>
+                </div>
+            {% endfor %}
+            <div class="photo-thumbnail photo-add">
+                <span class="glyphicon glyphicon-plus"></span>
+            </div>
+        </div>
+        <form id="photo-form" method="post" action="{{ url_for("sjtuface.person_detail", person_id=person.id) }}"
+              enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            {{ form.person_id }}
+            {{ form.photo }}
+            <button type="submit">go!</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var $form = $("#photo-form");
+        var $photo = $form.children("#photo")[0];
+
+        function submit_if_has_file() {
+            if ($photo.files.length > 0) {
+                $form.submit();
+            }
+        }
+        $(".photo-add").click(function () {
+            console.log($("#photo")[0].files);
+            $form.children("#person_id").val("{{ person.id }}");
+            $photo.click();
+            window.setInterval("submit_if_has_file()", 500);
+        });
+        $(".photo-delete").click(function () {
+            var filename_to_be_del = $(this).siblings(".photo-name").text();
+            $.ajax({
+                type: "DELETE",
+                url: "{{ url_for('photo', filename="name") }}".replace('name', filename_to_be_del)
+            });
+            location.reload()
+        });
+    </script>
+{% endblock %}
+
+
