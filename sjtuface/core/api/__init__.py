@@ -26,7 +26,6 @@ class Person(Resource):
         return jsonify(id=p.id, name=p.name)
 
     def delete(self, person_id):
-        # TODO: delete related `Photo` in db as well as its dir for uploads
         p = get_or_abort(models.Person, id=person_id)
         for photo in p.photos:
             db.session.delete(photo)
@@ -40,28 +39,6 @@ class Person(Resource):
         # todo
 
 
-#
-# class PersonList(Resource):
-#     def post(self):
-#         form = PersonForm(request.form)
-#
-#         if not form.validate_on_submit():
-#             flash(form.errors)
-#             return redirect(url_for("sjtuface.person"))
-#
-#         id = form.id.data
-#         name = form.name.data
-#         person = models.Person(id, name)
-#         try:
-#             db.session.add(person)
-#             db.session.commit()
-#         except sqlalchemy.exc.IntegrityError:
-#             db.session.rollback()
-#             flash("Duplicated id!")
-#
-#         return redirect(url_for("sjtuface.person"))
-
-
 class Photo(Resource):
     def delete(self, filename):
         p = get_or_abort(models.Photo, filename=filename)
@@ -71,6 +48,5 @@ class Photo(Resource):
         return '', 204
 
 
-# api.add_resource(PersonList, '/person')
 api.add_resource(Person, '/person/<string:person_id>')
 api.add_resource(Photo, '/photo/<string:filename>')

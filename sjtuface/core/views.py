@@ -36,25 +36,31 @@ def next_is_valid(next):
     return True  # TODO
 
 
+#todo: login checks
 @bp.route('/person', methods=['GET', 'POST'])
 def person():
-    people_list = Person.query.order_by(Person.id)
     form = PersonForm(request.form)
     errors = {}
-    if form.validate_on_submit():
-        id = form.id.data
+
+    if not form.validate_on_submit():
+        errors.update(form.errors)
+    else:
+        person_id = form.id.data
         name = form.name.data
-        p = Person(id, name)
+        p = Person(person_id, name)
+
         try:
+            # insert into db
             db.session.add(p)
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
             errors.setdefault(form.id.name, []).append("Duplicated id")
         else:
-            create_dir_if_not_exist(id, base_dir=UPLOAD_DIR)
-    else:
-        errors = form.errors
+            # where photos for this person to be placed
+            create_dir_if_not_exist(person_id, base_dir=UPLOAD_DIR)
+
+    people_list = Person.query.order_by(Person.id)
     return render_template('person.html', people=people_list, form=PersonForm(), errors=errors)
 
 
