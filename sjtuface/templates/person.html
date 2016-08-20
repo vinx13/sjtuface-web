@@ -8,6 +8,7 @@
             {% for person in people %}
                 <div class="person-name-tag">
                     <p class="person-id" hidden>{{ person.id }}</p>
+
                     <p>{{ person.name }}</p>
                     <span class="person-name-tag-delete">
                         <span class="glyphicon glyphicon-trash"></span>
@@ -24,14 +25,14 @@
                 <label for="id">id</label>
                 {{ form.id }}
                 <div class="text-danger">
-                {% for e in errors.id %}<p> {{ e }} </p>{% endfor %}
+                    {% for e in errors.id %}<p> {{ e }} </p>{% endfor %}
                 </div>
             </div>
             <div class="form-group">
                 <label for="name">姓名</label>
                 {{ form.name }}
                 <div class="text-danger">
-                {% for e in errors.name %}<p> {{ e }} </p>{% endfor %}
+                    {% for e in errors.name %}<p> {{ e }} </p>{% endfor %}
                 </div>
             </div>
             <button class="btn btn-default" type="submit">添加</button>
@@ -46,9 +47,12 @@
 
             $.ajax({
                 type: "DELETE",
-                url: "{{ url_for("person", person_id="id") }}".replace('id', id_to_be_del)
+                url: "{{ url_for("person", person_id="id") }}".replace('id', id_to_be_del),
+                success: function () {
+                    location.reload();
+                }
             });
-            location.reload()
+
         });
     </script>
 {% endblock %}
