@@ -2,15 +2,12 @@
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
 from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm
-from sjtuface.core.models import db, User, Person
-import sqlalchemy
-import os, re
-from utility import is_image_file, md5_file_name
+from sjtuface.core.models import db, User, Person, Photo
+from sqlalchemy.exc import IntegrityError
+import os
+from utility import is_image_file, create_dir_if_not_exist, get_extension_name, md5,UPLOAD_DIR
 
 bp = Blueprint('sjtuface', __name__)
-
-# FIXME: where should I place this variable?
-UPLOAD_DIR = os.path.abspath("sjtuface/static/uploads")
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -51,9 +48,11 @@ def person():
         try:
             db.session.add(p)
             db.session.commit()
-        except sqlalchemy.exc.IntegrityError:
+        except IntegrityError:
             db.session.rollback()
             errors.setdefault(form.id.name, []).append("Duplicated id")
+        else:
+            create_dir_if_not_exist(id, base_dir=UPLOAD_DIR)
     else:
         errors = form.errors
     return render_template('person.html', people=people_list, form=PersonForm(), errors=errors)
@@ -61,30 +60,43 @@ def person():
 
 @bp.route('/person/<string:person_id>', methods=['GET', 'POST'])
 def person_detail(person_id):
-    p = Person.query.filter_by(id=person_id).first()
-    if not p:
+    person_ = Person.query.filter_by(id=person_id).first()
+
+    if not person_:
         abort(404)
 
     form = PhotoForm(request.form)
     errors = {}
+
     if not form.validate_on_submit():
-        errors = form.errors
+        errors.update(form.errors)
     else:
         img = request.files[form.photo.name]
-        if not is_image_file(img.filename):
-            errors.setdefault(form.photo.name, []).append("Only jpg photo is accepted")
+        if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
+            errors.update({"photo": "Only jpg/jpeg photo is accepted"})
         else:
-            pid = form.person_id.data
-            try:
-                os.mkdir(os.path.join(UPLOAD_DIR, pid))
-            except OSError:
-                pass
-            fname = md5_file_name(img.read()) + "." + img.filename.split(".", 1)[-1]
-            img.seek(0)
-            img.save(os.path.join(UPLOAD_DIR, pid, fname))
-    photo_names = os.listdir(os.path.join(UPLOAD_DIR, person_id))
 
-    return render_template('person_detail.html', person=p, photo_names=photo_names, form=PhotoForm(), errors=errors)
+            # get file name
+            md5_ = md5(img.read())
+            img.seek(0)
+            ext = get_extension_name(img.filename)
+            file_name = "{}.{}".format(md5_, ext)
+
+            # insert into db
+            photo_ = Photo(file_name, owner=person_)
+            try:
+                db.session.add(photo_)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                errors.update({"photo": "Picture already exists!"})
+            else:
+                # save photo file
+                img.save(os.path.join(UPLOAD_DIR, person_id, file_name))
+
+    photo_names = os.listdir(os.path.join(UPLOAD_DIR, person_id))
+    return render_template('person_detail.html',
+                           person=person_, photo_names=photo_names, form=PhotoForm(), errors=errors)
 
 
 @bp.route('/uploads/<person_id>/<filename>')
