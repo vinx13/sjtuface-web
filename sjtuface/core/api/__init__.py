@@ -2,8 +2,9 @@ from flask_restful import Api, Resource, abort, reqparse, request
 from flask import jsonify, redirect, url_for, flash, render_template
 from ..models import db
 import sjtuface.core.models as models  # to avoid name conflict between resources and models
-from ..views import UPLOAD_DIR
-import os
+
+from ..utility import delete_photo_file, delete_photo_dir
+
 api = Api(prefix="/api")
 
 
@@ -25,14 +26,19 @@ class Person(Resource):
         return jsonify(id=p.id, name=p.name)
 
     def delete(self, person_id):
+        # TODO: delete related `Photo` in db as well as its dir for uploads
         p = get_or_abort(models.Person, id=person_id)
+        for photo in p.photos:
+            db.session.delete(photo)
         db.session.delete(p)
         db.session.commit()
+        delete_photo_dir(p.id, silent=True)
         return '', 204
 
     def put(self, person_id):
         pass
         # todo
+
 
 #
 # class PersonList(Resource):
@@ -59,8 +65,7 @@ class Person(Resource):
 class Photo(Resource):
     def delete(self, filename):
         p = get_or_abort(models.Photo, filename=filename)
-        path = os.path.join(UPLOAD_DIR, p.owner.id, filename)
-        print(path)
+        delete_photo_file(filename, dir_name=p.owner.id)
         db.session.delete(p)
         db.session.commit()
         return '', 204

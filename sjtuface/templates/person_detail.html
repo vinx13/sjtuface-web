@@ -8,9 +8,9 @@
             <p>id: {{ person.id }}</p>
             <p>name: {{ person.name }}</p>
         </div>
+        {{ errors.person_id }}
+        {{ errors.photo }}
         <div class="person-name-box">
-            {{ errors.person_id }}
-            {{ errors.photo }}
             {% for name in photo_names %}
                 <div class="photo-thumbnail">
                     <img src="{{ url_for('static',filename='/'.join(['uploads',person.id,name])) }}">
@@ -25,7 +25,7 @@
             </div>
         </div>
         <form id="photo-form" method="post" action="{{ url_for("sjtuface.person_detail", person_id=person.id) }}"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data" hidden>
             {{ form.csrf_token }}
             {{ form.person_id }}
             {{ form.photo }}
@@ -42,13 +42,15 @@
         function submit_if_has_file() {
             if ($photo.files.length > 0) {
                 $form.submit();
+            }else{
+                window.setTimeout("submit_if_has_file()", 500);
             }
         }
         $(".photo-add").click(function () {
             console.log($("#photo")[0].files);
             $form.children("#person_id").val("{{ person.id }}");
             $photo.click();
-            window.setInterval("submit_if_has_file()", 500);
+            window.setTimeout("submit_if_has_file()", 500);
         });
 
         $(".photo-delete").click(function () {

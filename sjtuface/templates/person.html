@@ -6,7 +6,8 @@
     <div class="center-window">
         <div class="person-name-box">
             {% for person in people %}
-                <div class="person-name-tag">
+                <div class="person-name-tag"
+                     onclick="window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}'">
                     <p class="person-id" hidden>{{ person.id }}</p>
 
                     <p>{{ person.name }}</p>
