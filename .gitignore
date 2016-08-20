@@ -92,4 +92,4 @@ ENV/
 node_modules
 apikey.cfg
 
-*/uploads/*
+sjtuface/static/uploads/

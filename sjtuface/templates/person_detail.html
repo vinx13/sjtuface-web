@@ -50,13 +50,19 @@
             $photo.click();
             window.setInterval("submit_if_has_file()", 500);
         });
+
         $(".photo-delete").click(function () {
             var filename_to_be_del = $(this).siblings(".photo-name").text();
             $.ajax({
                 type: "DELETE",
-                url: "{{ url_for('photo', filename="name") }}".replace('name', filename_to_be_del)
+                url: "{{ url_for('photo', filename="name") }}".replace('name', filename_to_be_del),
+                success: function () {
+                    location.reload();
+                },
+                error: function(){
+                    alert("failed!");
+                }
             });
-            location.reload()
         });
     </script>
 {% endblock %}
