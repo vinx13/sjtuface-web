@@ -5,7 +5,7 @@ from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm
 from sjtuface.core.models import db, User, Person, Photo
 from sqlalchemy.exc import IntegrityError
 import os
-from utility import is_image_file, create_dir_if_not_exist, get_extension_name, md5,UPLOAD_DIR
+from utility import *
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -56,9 +56,6 @@ def person():
         except IntegrityError:
             db.session.rollback()
             errors.setdefault(form.id.name, []).append("Duplicated id")
-        else:
-            # where photos for this person to be placed
-            create_dir_if_not_exist(person_id, base_dir=UPLOAD_DIR)
 
     people_list = Person.query.order_by(Person.id)
     return render_template('person.html', people=people_list, form=PersonForm(), errors=errors)
@@ -83,13 +80,10 @@ def person_detail(person_id):
         else:
 
             # get file name
-            md5_ = md5(img.read())
-            img.seek(0)
-            ext = get_extension_name(img.filename)
-            file_name = "{}.{}".format(md5_, ext)
+            filename =  get_filename(img)
 
             # insert into db
-            photo_ = Photo(file_name, owner=person_)
+            photo_ = Photo(filename, owner=person_)
             try:
                 db.session.add(photo_)
                 db.session.commit()
@@ -98,9 +92,10 @@ def person_detail(person_id):
                 errors.update({"photo": "Picture already exists!"})
             else:
                 # save photo file
-                img.save(os.path.join(UPLOAD_DIR, person_id, file_name))
+                img.save(os.path.join(UPLOAD_DIR, filename))
 
-    photo_names = os.listdir(os.path.join(UPLOAD_DIR, person_id))
+    photo_names = map(lambda photo: photo.filename, person_.photos)
+
     return render_template('person_detail.html',
                            person=person_, photo_names=photo_names, form=PhotoForm(), errors=errors)
 

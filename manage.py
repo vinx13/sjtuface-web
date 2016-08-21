@@ -36,8 +36,6 @@ def seed():
     person_list = [Person(i, n) for i, n in zip(range(len(names)), names)]
     db.session.add_all(person_list)
     db.session.commit()
-    for n in range(len(names)):
-        create_dir_if_not_exist(str(n), UPLOAD_DIR)
 
 
 @manager.command
@@ -49,9 +47,7 @@ def _clean_photo():
     for p in Photo.query.all():
         db.session.delete(p)
     db.session.commit()
-    for p in Person.query.all():
-        delete_photo_dir(p.id, silent=True)
-        create_dir_if_not_exist(p.id, UPLOAD_DIR)
+
 
 if __name__ == '__main__':
     manager.run()

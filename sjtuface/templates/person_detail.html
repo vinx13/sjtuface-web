@@ -13,7 +13,7 @@
         <div class="person-name-box">
             {% for name in photo_names %}
                 <div class="photo-thumbnail">
-                    <img src="{{ url_for('static',filename='/'.join(['uploads',person.id,name])) }}">
+                    <img src="{{ url_for('static',filename='/'.join(['uploads', name])) }}">
                     <span class="photo-name" hidden>{{ name }}</span>
                     <span class="photo-delete">
                         <span class="glyphicon glyphicon-trash"></span>

@@ -3,7 +3,7 @@ from flask import jsonify, redirect, url_for, flash, render_template
 from ..models import db
 import sjtuface.core.models as models  # to avoid name conflict between resources and models
 
-from ..utility import delete_photo_file, delete_photo_dir
+from ..utility import delete_photo_file
 
 api = Api(prefix="/api")
 
@@ -28,10 +28,10 @@ class Person(Resource):
     def delete(self, person_id):
         p = get_or_abort(models.Person, id=person_id)
         for photo in p.photos:
+            delete_photo_file(photo.filename)
             db.session.delete(photo)
         db.session.delete(p)
         db.session.commit()
-        delete_photo_dir(p.id, silent=True)
         return '', 204
 
     def put(self, person_id):
@@ -42,7 +42,7 @@ class Person(Resource):
 class Photo(Resource):
     def delete(self, filename):
         p = get_or_abort(models.Photo, filename=filename)
-        delete_photo_file(filename, dir_name=p.owner.id)
+        delete_photo_file(filename)
         db.session.delete(p)
         db.session.commit()
         return '', 204
