@@ -30,20 +30,20 @@
 .person-name-tag .person-name-tag-delete {
     position: absolute;
     right: 5px;
-    bottom: 3px;
+    bottom: 1px;
     opacity: 0;
-    transition: opacity .2s
+    transition: opacity .2s;
+    cursor: pointer;
+}
+
+.person-name-tag .person-name-tag-photo-prompt{
+    position: absolute;
+    right: 5px;
+    top: 2px;
+    font-size: 3px;
 }
 
 .person-name-tag:hover .person-name-tag-delete,
 .person-name-tag:active .person-name-tag-delete {
-    cursor: pointer;
     opacity: 1;
-}
-
-.person-name-tag-photo-prompt{
-    position: absolute;
-    right: 5px;
-    bottom: 2px;
-    font-size: 3px;
 }
