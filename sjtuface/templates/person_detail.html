@@ -4,13 +4,21 @@
 {% endblock %}
 {% block body %}
     <div class="center-window">
-        <div>
+        <div class="text-center">
+            <h1>{{ person.name }}</h1>
             <p>id: {{ person.id }}</p>
-            <p>name: {{ person.name }}</p>
+            {% if photo_names|length == 0 %}
+                <p>一张照片也没有! ╮(╯▽╰)╭ </p>
+            {% else %}
+                <p>拥有 {{ photo_names|length }} 张照片 </p>
+            {% endif %}
+        </div>
+        <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.person") }}'">
+            <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
         {{ errors.person_id }}
         {{ errors.photo }}
-        <div class="person-name-box">
+        <div class="center-window-box">
             {% for name in photo_names %}
                 <div class="photo-thumbnail">
                     <img src="{{ url_for('static',filename='/'.join(['uploads', name])) }}">
@@ -20,7 +28,7 @@
                     </span>
                 </div>
             {% endfor %}
-            <div class="photo-thumbnail photo-add">
+            <div class="photo-thumbnail add-button">
                 <span class="glyphicon glyphicon-plus"></span>
             </div>
         </div>
@@ -42,11 +50,12 @@
         function submit_if_has_file() {
             if ($photo.files.length > 0) {
                 $form.submit();
-            }else{
+            } else {
                 window.setTimeout("submit_if_has_file()", 500);
             }
         }
-        $(".photo-add").click(function () {
+
+        $(".add-button").click(function () {
             console.log($("#photo")[0].files);
             $form.children("#person_id").val("{{ person.id }}");
             $photo.click();
@@ -61,7 +70,7 @@
                 success: function () {
                     location.reload();
                 },
-                error: function(){
+                error: function () {
                     alert("failed!");
                 }
             });

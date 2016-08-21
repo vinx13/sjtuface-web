@@ -4,13 +4,20 @@
 {% endblock %}
 {% block body %}
     <div class="center-window">
-        <div class="person-name-box">
+        <div class="text-center">
+            <p>当前共有 {{ people.count() }} 人</p>
+        </div>
+        <div class="center-window-box">
             {% for person in people %}
                 <div class="person-name-tag"
                      onclick="window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}'">
                     <p class="person-id" hidden>{{ person.id }}</p>
 
                     <p>{{ person.name }}</p>
+                    <p class="person-name-tag-photo-prompt">
+                        {{ person.photos|length }}
+                        <span class="glyphicon glyphicon-picture"></span>
+                    </p>
                     <span class="person-name-tag-delete">
                         <span class="glyphicon glyphicon-trash"></span>
                     </span>
@@ -18,6 +25,9 @@
             {% else %}
                 <div>此地荒无人烟.....</div>
             {% endfor %}
+            <div class="add-button">
+                <span class="glyphicon glyphicon-plus"></span>
+            </div>
         </div>
 
         <form class="form" method="post" action="{{ url_for("sjtuface.person") }}">
@@ -55,6 +65,7 @@
             });
 
         });
+
     </script>
 {% endblock %}
 
