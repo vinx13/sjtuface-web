@@ -22,15 +22,13 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </span>
                 </div>
-            {% else %}
-                <div>此地荒无人烟.....</div>
             {% endfor %}
             <div class="add-button">
                 <span class="glyphicon glyphicon-plus"></span>
             </div>
         </div>
 
-        <form class="form" method="post" action="{{ url_for("sjtuface.person") }}">
+        <form id="person-form" class="form-inline" method="post" action="{{ url_for("sjtuface.person") }}" hidden>
             {{ form.csrf_token }}
             <div class="form-group">
                 <label for="id">id</label>
@@ -48,11 +46,26 @@
             </div>
             <button class="btn btn-default" type="submit">添加</button>
         </form>
+
     </div>
 {% endblock %}
 
 {% block script %}
     <script>
+        var $form = $("#person-form").first();
+        var $add_btn =$(".add-button").first();
+
+        {% if errors %}
+            // to display the error message
+            $form.slideToggle();
+            $add_btn.toggleClass("rotated");
+        {% endif %}
+
+        $add_btn.click(function () {
+            $form.slideToggle();
+            $(this).toggleClass("rotated");
+        });
+
         $(".person-name-tag-delete").click(function () {
             var id_to_be_del = $(this).siblings(".person-id").text();
 
@@ -60,12 +73,14 @@
                 type: "DELETE",
                 url: "{{ url_for("person", person_id="id") }}".replace('id', id_to_be_del),
                 success: function () {
-                    location.reload();
+                    window.location.href='{{ url_for("sjtuface.person") }}';
+                },
+                error: function(){
+                    alert("failed!");
                 }
             });
 
         });
-
     </script>
 {% endblock %}
 

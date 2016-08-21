@@ -13,8 +13,10 @@ body {
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 30px;
 
-    padding: 5px 30px 30px;
+    padding: 30px;
     margin-top: 80px;
+
+    transition: all .2s;
 }
 
 .center-window-box {
@@ -23,6 +25,7 @@ body {
 
     overflow-y: scroll;
     padding: 10px;
+    margin: 20px auto;
     text-align: left;
 
     border: 1px #27a dashed;
@@ -67,8 +70,14 @@ body {
     vertical-align: middle;
     cursor: pointer;
 
-    transition: background-color .3s, color .3s;
+    transition: background-color .3s, color .3s, transform .5s;
     margin: 5px 2%;
+
+    display: inline-block;
+}
+
+.add-button.rotated{
+    transform: rotate(225deg);
 }
 
 .add-button:hover {

@@ -16,8 +16,10 @@
         <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.person") }}'">
             <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
-        {{ errors.person_id }}
-        {{ errors.photo }}
+        <div class="text-danger">
+            {% for e in errors.person_id %}<p> {{ e }} </p>{% endfor %}
+            {% for e in errors.photo %}<p> {{ e }} </p>{% endfor %}
+        </div>
         <div class="center-window-box">
             {% for name in photo_names %}
                 <div class="photo-thumbnail">
@@ -43,15 +45,19 @@
 {% endblock %}
 
 {% block script %}
+    <script src="{{ url_for('static', filename='scripts/utility.js') }}"></script>
+    <script>
+
+    </script>
     <script>
         var $form = $("#photo-form");
         var $photo = $form.children("#photo")[0];
 
-        function submit_if_has_file() {
+        function auto_submit_if_has_file() {
             if ($photo.files.length > 0) {
                 $form.submit();
             } else {
-                window.setTimeout("submit_if_has_file()", 500);
+                window.setTimeout(auto_submit_if_has_file, 500);
             }
         }
 
@@ -59,7 +65,7 @@
             console.log($("#photo")[0].files);
             $form.children("#person_id").val("{{ person.id }}");
             $photo.click();
-            window.setTimeout("submit_if_has_file()", 500);
+            window.setTimeout(auto_submit_if_has_file, 500);
         });
 
         $(".photo-delete").click(function () {
@@ -68,10 +74,7 @@
                 type: "DELETE",
                 url: "{{ url_for('photo', filename="name") }}".replace('name', filename_to_be_del),
                 success: function () {
-                    location.reload();
-                },
-                error: function () {
-                    alert("failed!");
+                    window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}';
                 }
             });
         });

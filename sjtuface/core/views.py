@@ -36,7 +36,7 @@ def next_is_valid(next):
     return True  # TODO
 
 
-#todo: login checks
+# todo: login checks
 @bp.route('/person', methods=['GET', 'POST'])
 def person():
     form = PersonForm(request.form)
@@ -55,10 +55,10 @@ def person():
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            errors.setdefault(form.id.name, []).append("Duplicated id")
+            errors.setdefault("id", []).append("Duplicated id")
 
     people_list = Person.query.order_by(Person.id)
-    return render_template('person.html', people=people_list, form=PersonForm(), errors=errors)
+    return render_template('person.html', people=people_list, form=PersonForm(None), errors=errors)
 
 
 @bp.route('/person/<string:person_id>', methods=['GET', 'POST'])
@@ -76,11 +76,11 @@ def person_detail(person_id):
     else:
         img = request.files[form.photo.name]
         if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
-            errors.update({"photo": "Only jpg/jpeg photo is accepted"})
+            errors.setdefault("photo", []).append("Only jpg/jpeg photo is accepted")
         else:
 
             # get file name
-            filename =  get_filename(img)
+            filename = get_filename(img)
 
             # insert into db
             photo_ = Photo(filename, owner=person_)
@@ -89,7 +89,7 @@ def person_detail(person_id):
                 db.session.commit()
             except IntegrityError:
                 db.session.rollback()
-                errors.update({"photo": "Picture already exists!"})
+                errors.setdefault("photo", []).append("Picture already exists!")
             else:
                 # save photo file
                 img.save(os.path.join(UPLOAD_DIR, filename))
@@ -97,7 +97,7 @@ def person_detail(person_id):
     photo_names = map(lambda photo: photo.filename, person_.photos)
 
     return render_template('person_detail.html',
-                           person=person_, photo_names=photo_names, form=PhotoForm(), errors=errors)
+                           person=person_, photo_names=photo_names, form=PhotoForm(None), errors=errors)
 
 
 @bp.route('/uploads/<person_id>/<filename>')
