@@ -9,3 +9,8 @@ SQLALCHEMY_DATABASE_URI="mysql://root:123456@localhost/flaskblog"
 #: cache settings
 # find options on http://pythonhosted.org/Flask-Cache/
 CACHE_TYPE = 'simple'
+
+DEFAULT_GROUP_NAME = "default"
+
+API_KEY = 'do_not_tell_you'
+API_SECRET = 'do_not_tell_you'
