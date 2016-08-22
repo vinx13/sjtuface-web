@@ -9,7 +9,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 </head>
+
 <body>
+
+{% if current_user.is_authenticated %}
+<div class="user-prompt">
+    <span>Hi, {{ current_user.username }}</span>
+    <div class="logout-btn" onclick="window.location.href='{{ url_for("sjtuface.logout") }}'">
+        登出 <span class="glyphicon glyphicon-log-out"></span>
+    </div>
+</div>
+{% endif %}
+
 {% block body %}{% endblock %}
 </body>
 

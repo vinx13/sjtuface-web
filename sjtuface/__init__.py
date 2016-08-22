@@ -1,8 +1,6 @@
-from flask import Flask, session, request, abort,g
+from flask import Flask, session, request, abort, redirect, url_for
 from .core.models import db
 from flask_login import LoginManager
-from .core.recognition import FaceRecognitionSys
-import config
 
 import sys
 
@@ -58,6 +56,10 @@ def init_login(app):
         from .core.models import User
         return db.session.query(User).get(user_id)
 
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        return redirect(url_for("sjtuface.login"))
+
 
 def init_csrf_protection(app):
     app.jinja_env.globals['csrf_token'] = generate_csrf_token
@@ -74,7 +76,3 @@ def generate_csrf_token():
     if '_csrf_token' not in session:
         session['_csrf_token'] = 'some_random_string()'  # FIXME
     return session['_csrf_token']
-
-
-def create_facepp():
-    return FaceRecognitionSys(config.DEFAULT_GROUP_NAME)

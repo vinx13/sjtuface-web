@@ -93,4 +93,18 @@ body {
     left: 1px;
 }
 
+.user-prompt{
+    position: absolute;
+    right: 10px;
+    top:5px;
+}
 
+.logout-btn{
+    cursor: pointer;
+    border-radius: 2px;
+    transition: color .2s,background-color .2s;
+}
+.logout-btn:hover{
+    color: #fff;
+    background-color: #59d;
+}

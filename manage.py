@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-from flask.ext.script import Manager
+from flask_script import Manager
 from sjtuface import create_app
 from sjtuface.core.models import db, User, Person, Photo
 from werkzeug.security import generate_password_hash
