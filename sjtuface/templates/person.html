@@ -9,11 +9,13 @@
         </div>
         <div class="center-window-box">
             {% for person in people %}
-                <div class="person-name-tag"
-                     onclick="window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}'">
+                <div class="person-name-tag">
                     <p class="person-id" hidden>{{ person.id }}</p>
 
-                    <p>{{ person.name }}</p>
+                    <p class="person-name"
+                       onclick="window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}'">
+                        {{ person.name }}
+                    </p>
                     <p class="person-name-tag-photo-prompt">
                         {{ person.photos|length }}
                         <span class="glyphicon glyphicon-picture"></span>
@@ -53,7 +55,7 @@
 {% block script %}
     <script>
         var $form = $("#person-form").first();
-        var $add_btn =$(".add-button").first();
+        var $add_btn = $(".add-button").first();
 
         {% if errors %}
             // to display the error message
@@ -73,9 +75,9 @@
                 type: "DELETE",
                 url: "{{ url_for("person", person_id="id") }}".replace('id', id_to_be_del),
                 success: function () {
-                    window.location.href='{{ url_for("sjtuface.person") }}';
+                    window.location.href = '{{ url_for("sjtuface.person") }}';
                 },
-                error: function(){
+                error: function () {
                     alert("failed!");
                 }
             });

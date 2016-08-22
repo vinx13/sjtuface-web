@@ -15,6 +15,10 @@
     transition: color .2s, background-color .2s, border-color .2s;
 }
 
+.person-name-tag .person-name {
+    cursor: pointer;
+}
+
 .person-name-tag p {
     text-align: center;
     vertical-align: middle;
@@ -40,7 +44,7 @@
     position: absolute;
     right: 5px;
     top: 2px;
-    font-size: 3px;
+    font-size: .7em;
 }
 
 .person-name-tag:hover .person-name-tag-delete,
