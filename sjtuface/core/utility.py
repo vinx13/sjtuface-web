@@ -40,9 +40,8 @@ def delete_photo_file(filename):
     """
     :param: filename: filename, extestion name included
     """
-
-    # todo: exception handle
-    os.remove(os.path.join(UPLOAD_DIR, filename))
+    if os.path.exists(filename):
+        os.remove(os.path.join(UPLOAD_DIR, filename))
 
 
 def get_filename(file):

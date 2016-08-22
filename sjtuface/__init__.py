@@ -1,6 +1,8 @@
-from flask import Flask, session, request, abort
+from flask import Flask, session, request, abort,g
 from .core.models import db
 from flask_login import LoginManager
+from .core.recognition import FaceRecognitionSys
+import config
 
 import sys
 
@@ -72,3 +74,7 @@ def generate_csrf_token():
     if '_csrf_token' not in session:
         session['_csrf_token'] = 'some_random_string()'  # FIXME
     return session['_csrf_token']
+
+
+def create_facepp():
+    return FaceRecognitionSys(config.DEFAULT_GROUP_NAME)

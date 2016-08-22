@@ -6,6 +6,7 @@ from sjtuface.core.models import db, User, Person, Photo
 from sqlalchemy.exc import IntegrityError
 import os
 from utility import *
+from sjtuface import create_facepp
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -103,3 +104,17 @@ def person_detail(person_id):
 @bp.route('/uploads/<person_id>/<filename>')
 def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
+
+
+
+@bp.route('/train', methods = ['POST'])
+def do_train():
+    print 'training'
+    facepp = create_facepp()
+    facepp.initialize()
+    return redirect(url_for('sjtuface.train'))
+
+@bp.route('/train', methods = ['GET'])
+def train():
+    return render_template('train.html')
+

@@ -34,6 +34,7 @@ DEBUG_LEVEL = 1
 
 import sys
 import socket
+import string
 import urllib
 import urllib2
 import json
