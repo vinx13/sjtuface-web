@@ -4,7 +4,7 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm
 from sjtuface.core.models import db, User, Person, Photo
 from sqlalchemy.exc import IntegrityError
-import os
+from werkzeug.security import check_password_hash
 from utility import *
 
 bp = Blueprint('sjtuface', __name__)
@@ -16,28 +16,40 @@ def login():
     # client-side form data. For example, WTForms is a library that will
     # handle this for us, and we use a custom LoginForm to validate.
     form = LoginForm()
-    if form.validate_on_submit():
+    errors = {}
+    if not form.validate_on_submit():
+        errors.update(form.errors)
+    else:
         user = db.session.query(User).get(form.username.data)
-        login_user(user)
+        if not user:
+            errors.setdefault("username", []).append("该用户名不存在!")
+        elif not check_password_hash(user.password, form.password.data):
+            errors.setdefault("password", []).append("密码错误!")
+        else:
+            login_user(user)
+            next = request.args.get('next')
+            # next_is_valid should check if the user has valid
+            # permission to access the `next` url
+            if next_is_valid(next):
+                return redirect(next or url_for('sjtuface.person'))
+            else:
+                return abort(400)
 
-        flash('Logged in successfully.')
-
-        next = request.args.get('next')
-        # next_is_valid should check if the user has valid
-        # permission to access the `next` url
-        if not next_is_valid(next):
-            return abort(400)
-
-        return redirect(next or url_for('sjtuface.manage_person'))
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, errors=errors)
 
 
 def next_is_valid(next):
     return True  # TODO
 
 
-# todo: login checks
+@bp.route('/logout', methods=['GET'])
+def logout():
+    logout_user()
+    return redirect(url_for("sjtuface.login"))
+
+
 @bp.route('/person', methods=['GET', 'POST'])
+@login_required
 def person():
     form = PersonForm(request.form)
     errors = {}
@@ -62,6 +74,7 @@ def person():
 
 
 @bp.route('/person/<string:person_id>', methods=['GET', 'POST'])
+@login_required
 def person_detail(person_id):
     person_ = Person.query.filter_by(id=person_id).first()
 
@@ -101,5 +114,6 @@ def person_detail(person_id):
 
 
 @bp.route('/uploads/<person_id>/<filename>')
+@login_required
 def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)

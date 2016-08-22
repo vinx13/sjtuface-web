@@ -1,15 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h2>Login</h2>
-  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
-  <form action="{{ url_for('sjtuface.login') }}" method="post">
-    <dl>
-    {{ form.csrf_token }}
-      <dt>Username:
-      <dd>{{ form.username }}
-      <dt>Password:
-      <dd>{{ form.password }}
-      <dd><input type="submit" value="Login">
-    </dl>
-  </form>
+    <div class="center-window">
+        <h2>Login</h2>
+        <form action="{{ url_for('sjtuface.login') }}" method="post">
+            {{ form.csrf_token }}
+
+            <div class="form-group">
+                <label for="username">用户名</label>
+                {{ form.username }}
+                <div class="text-danger">
+                    {% for e in errors.username %}<p> {{ e }} </p>{% endfor %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                {{ form.password }}
+                <div class="text-danger">
+                    {% for e in errors.password %}<p> {{ e }} </p>{% endfor %}
+                </div>
+            </div>
+            <button class="btn btn-default" type="submit">登录</button>
+        </form>
+    </div>
 {% endblock %}

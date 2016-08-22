@@ -1,4 +1,4 @@
-from flask import Flask, session, request, abort
+from flask import Flask, session, request, abort, redirect, url_for
 from .core.models import db
 from flask_login import LoginManager
 
@@ -55,6 +55,10 @@ def init_login(app):
     def load_user(user_id):
         from .core.models import User
         return db.session.query(User).get(user_id)
+
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        return redirect(url_for("sjtuface.login"))
 
 
 def init_csrf_protection(app):
