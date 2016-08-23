@@ -1,0 +1,16 @@
+.home-title {
+    margin-top: 20vh;
+}
+
+.home-title div {
+    font-size: 3em;
+}
+
+.home-title .home-buttons {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.home-title .home-buttons button {
+    margin: 50px;
+}

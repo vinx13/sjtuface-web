@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/person_detail.css') }}">
 {% endblock %}
 {% block body %}
     <div class="center-window">
@@ -13,7 +12,7 @@
                 <p>拥有 {{ photo_names|length }} 张照片 </p>
             {% endif %}
         </div>
-        <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.person") }}'">
+        <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.home") }}'">
             <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
         <div class="text-danger">

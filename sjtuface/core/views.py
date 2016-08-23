@@ -32,7 +32,7 @@ def login():
             # next_is_valid should check if the user has valid
             # permission to access the `next` url
             if next_is_valid(next):
-                return redirect(next or url_for('sjtuface.person'))
+                return redirect(next or url_for('sjtuface.home'))
             else:
                 return abort(400)
 
@@ -47,6 +47,13 @@ def next_is_valid(next):
 def logout():
     logout_user()
     return redirect(url_for("sjtuface.login"))
+
+
+@bp.route('/', methods=['GET'])
+@bp.route('/home', methods=['GET'])
+@login_required
+def home():
+    return render_template("home.html")
 
 
 @bp.route('/person', methods=['GET', 'POST'])
@@ -120,15 +127,20 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-
-@bp.route('/train', methods = ['POST'])
+@bp.route('/train', methods=['POST'])
 def do_train():
     print 'training'
     facepp = create_facepp()
     facepp.initialize()
     return redirect(url_for('sjtuface.train'))
 
-@bp.route('/train', methods = ['GET'])
+
+@bp.route('/train', methods=['GET'])
 def train():
     return render_template('train.html')
 
+
+@bp.route('/attendance', methods=['GET'])
+def attendance():
+    person_list = Person.query.all()
+    return render_template("attendence.html", person_list=person_list)

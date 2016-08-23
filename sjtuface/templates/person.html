@@ -29,7 +29,9 @@
                 <span class="glyphicon glyphicon-plus"></span>
             </div>
         </div>
-
+        <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.home") }}'">
+            <span class="glyphicon glyphicon-arrow-left"></span> 返回
+        </div>
         <form id="person-form" class="form-inline" method="post" action="{{ url_for("sjtuface.person") }}" hidden>
             {{ form.csrf_token }}
             <div class="form-group">

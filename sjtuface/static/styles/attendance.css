@@ -1,0 +1,17 @@
+.attendance-list {
+    width: 25%;
+    height: 300px;
+    position: absolute;
+    left: 30px;
+    top: 50px;
+    overflow-y: scroll;
+}
+
+.attendance-list table {
+    background-color: #fff;
+}
+
+.photo-box {
+    width: 70%;
+    margin-left: 30%;
+}
