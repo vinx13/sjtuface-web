@@ -21,3 +21,8 @@ class PhotoForm(Form):
 
 class AttendancePhotoForm(Form):
     photo = FileField('photo')
+
+
+class IdentifyForm(Form):
+    photo = FileField('photo') # photo to be recognized
+

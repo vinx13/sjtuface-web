@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+    {% if results %}
+        {% for result in results %}
+             <div>
+             <span>{{ result.person_name }}</span>
+             <span>{{ result.confidence }}</span>
+             </div>
+        {% endfor %}
+    {% endif %}
+    <form id="identify-form" method="post" action="{{ url_for("sjtuface.identify") }}"
+          enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        {{ form.photo }}
+        <button type="submit">提交</button>
+    </form>
+{% endblock %}

@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
-from flask import flash, Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
+from flask import Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
-from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm, AttendancePhotoForm
-from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
-from utility import *
+
 from sjtuface import create_facepp
+from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm, AttendancePhotoForm, IdentifyForm
+from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
+from utility import *
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -168,3 +169,22 @@ def attendance():
     return render_template("attendence.html",
                            person_list=person_list, photo_names=photo_names,
                            form=AttendancePhotoForm(None), errors=errors)
+
+
+@bp.route('/identify', methods=['GET', 'POST'])
+def identify():
+    form = IdentifyForm(request.form)
+    results = None
+    if form.validate_on_submit():
+        filename = form.photo.name
+        img = request.files[filename]
+
+        if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
+            return  # TODO
+
+        path = os.path.join(UPLOAD_DIR, get_filename(img))
+        img.save(path)
+        facepp = create_facepp()
+        results = facepp.identify_new_face(path)
+
+    return render_template('identify.html', form=form, results=results)
