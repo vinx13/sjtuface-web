@@ -2,7 +2,7 @@
 # coding: utf-8
 from flask_script import Manager
 from sjtuface import create_app
-from sjtuface.core.models import db, User, Person, Photo
+from sjtuface.core.models import db, User, Person, Photo,AttendancePhoto
 from werkzeug.security import generate_password_hash
 from sjtuface.core.utility import create_dir_if_not_exist, delete_photo_file, UPLOAD_DIR
 
@@ -12,6 +12,7 @@ import shutil
 app = create_app()
 
 manager = Manager(app)
+
 
 @manager.command
 def init():
@@ -45,11 +46,13 @@ def seed():
         for photo in p.photos:
             delete_photo_file(photo.filename)
             db.session.delete(photo)
+        db.session.delete(p)
 
     db.session.commit()
-    names = ["傅园慧", "宁泽涛", "张继科", "张梦雪", "林武威",
-             "Obama", "Hitler", "Hillary", "Jobs"]
-    person_list = [Person(i, n) for i, n in zip(range(len(names)), names)]
+    # names = [u"傅园慧", u"宁泽涛", u"张继科", u"张梦雪", u"林武威",
+    #          u"Obama", u"Hitler", u"Hillary", u"Jobs"]
+    names = [x for x in range(1, 10)]
+    person_list = [Person(unicode(i), unicode(n)) for i, n in zip(range(len(names)), names)]
     db.session.add_all(person_list)
     db.session.commit()
 
@@ -61,6 +64,8 @@ def _clean_photo():
     create empty dir for every `Person`
     """
     for p in Photo.query.all():
+        db.session.delete(p)
+    for p in AttendancePhoto.query.all():
         db.session.delete(p)
     db.session.commit()
 

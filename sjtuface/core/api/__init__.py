@@ -21,10 +21,6 @@ def get_or_abort(model, **filter_):
 
 
 class Person(Resource):
-    def get(self, person_id):
-        p = get_or_abort(person_id)
-        return jsonify(id=p.id, name=p.name)
-
     def delete(self, person_id):
         p = get_or_abort(models.Person, id=person_id)
         for photo in p.photos:
@@ -48,5 +44,16 @@ class Photo(Resource):
         return '', 204
 
 
+class AttendancePhoto(Resource):
+    def delete(self, filename):
+        p = get_or_abort(models.AttendancePhoto, filename=filename)
+        delete_photo_file(filename, from_='a')
+        # from_ = 'a' means delete from 'ATTENDANCE_UPLOAD_DIR'
+        db.session.delete(p)
+        db.session.commit()
+        return '', 204
+
+
 api.add_resource(Person, '/person/<string:person_id>')
 api.add_resource(Photo, '/photo/<string:filename>')
+api.add_resource(AttendancePhoto, '/atd_photo/<string:filename>', endpoint="atd_photo")

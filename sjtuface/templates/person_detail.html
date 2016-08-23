@@ -38,7 +38,6 @@
             {{ form.csrf_token }}
             {{ form.person_id }}
             {{ form.photo }}
-            <button type="submit">go!</button>
         </form>
     </div>
 {% endblock %}
@@ -57,7 +56,6 @@
         }
 
         $(".add-button").click(function () {
-            console.log($("#photo")[0].files);
             $form.children("#person_id").val("{{ person.id }}");
             $photo.click();
             window.setTimeout(auto_submit_if_has_file, 500);
