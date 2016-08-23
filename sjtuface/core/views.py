@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
-from flask import flash, Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
+from flask import Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
-from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm, AttendancePhotoForm
-from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
-from utility import *
+
 from sjtuface import create_facepp
+from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm, AttendancePhotoForm, IdentifyForm
+from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
+from utility import *
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -127,17 +128,14 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-@bp.route('/train', methods=['POST'])
-def do_train():
-    print 'training'
-    facepp = create_facepp()
-    facepp.initialize()
-    return redirect(url_for('sjtuface.train'))
-
-
-@bp.route('/train', methods=['GET'])
+@bp.route('/train', methods=['GET', 'POST'])
 def train():
-    return render_template('train.html')
+    if request.method == 'POST':
+        facepp = create_facepp()
+        facepp.initialize()
+        return redirect(url_for('sjtuface.train'))
+    elif request.method == 'GET':
+        return render_template('train.html')
 
 
 @bp.route('/attendance', methods=['GET', 'POST'])
@@ -171,3 +169,22 @@ def attendance():
     return render_template("attendence.html",
                            person_list=person_list, photo_names=photo_names,
                            form=AttendancePhotoForm(None), errors=errors)
+
+
+@bp.route('/identify', methods=['GET', 'POST'])
+def identify():
+    form = IdentifyForm(request.form)
+    results = None
+    if form.validate_on_submit():
+        filename = form.photo.name
+        img = request.files[filename]
+
+        if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
+            return  # TODO
+
+        path = os.path.join(UPLOAD_DIR, get_filename(img))
+        img.save(path)
+        facepp = create_facepp()
+        results = facepp.identify_new_face(path)
+
+    return render_template('identify.html', form=form, results=results)
