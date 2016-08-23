@@ -23,63 +23,66 @@
         <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.home") }}'">
             <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
+
         <div class="text-danger">
             {% for e in errors.photo %}<p> {{ e }} </p>{% endfor %}
         </div>
+
         <div class="center-window-box photo-box">
-            {#            {% for name in photo_names %}#}
-            {#                <div class="photo-thumbnail">#}
-            {#                    <img src="{{ url_for('static',filename='/'.join(['uploads', name])) }}">#}
-            {#                    <span class="photo-name" hidden>{{ name }}</span>#}
-            {#                    <span class="photo-delete">#}
-            {#                        <span class="glyphicon glyphicon-trash"></span>#}
-            {#                    </span>#}
-            {#                </div>#}
-            {#            {% endfor %}#}
+            {% for name in photo_names %}
+                <div class="photo-thumbnail">
+                    <img src="{{ url_for('static',filename='/'.join(['uploads_attendance', name])) }}">
+                    <span class="photo-name" hidden>{{ name }}</span>
+                    <span class="photo-delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </span>
+                </div>
+            {% endfor %}
             <div class="photo-thumbnail add-button">
                 <span class="glyphicon glyphicon-plus"></span>
             </div>
         </div>
-        {#        <form id="photo-form" method="post" action="{{ url_for("sjtuface.person_detail", person_id=person.id) }}"#}
-        {#              enctype="multipart/form-data" hidden>#}
-        {#            {{ form.csrf_token }}#}
-        {#            {{ form.person_id }}#}
-        {#            {{ form.photo }}#}
-        {#            <button type="submit">go!</button>#}
-        {#        </form>#}
+
+        <form id="photo-form" method="post" action="{{ url_for("sjtuface.attendance") }}"
+              enctype="multipart/form-data" hidden>
+            {{ form.csrf_token }}
+            {{ form.photo }}
+        </form>
+
+        <div class="text-center">
+            <button class="btn btn-info btn-lg" onclick="">开始考勤</button>
+        </div>
     </div>
 {% endblock %}
 
 {% block script %}
     <script>
-        {#        var $form = $("#photo-form");#}
-        {#        var $photo = $form.children("#photo")[0];#}
-        {##}
-        {#        function auto_submit_if_has_file() {#}
-        {#            if ($photo.files.length > 0) {#}
-        {#                $form.submit();#}
-        {#            } else {#}
-        {#                window.setTimeout(auto_submit_if_has_file, 500);#}
-        {#            }#}
-        {#        }#}
-        {##}
-        {#        $(".add-button").click(function () {#}
-        {#            console.log($("#photo")[0].files);#}
-        {#            $form.children("#person_id").val("{{ person.id }}");#}
-        {#            $photo.click();#}
-        {#            window.setTimeout(auto_submit_if_has_file, 500);#}
-        {#        });#}
-        {##}
-        {#        $(".photo-delete").click(function () {#}
-        {#            var filename_to_be_del = $(this).siblings(".photo-name").text();#}
-        {#            $.ajax({#}
-        {#                type: "DELETE",#}
-        {#                url: "{{ url_for('photo', filename="name") }}".replace('name', filename_to_be_del),#}
-        {#                success: function () {#}
-        {#                    window.location.href='{{ url_for("sjtuface.person_detail", person_id=person.id) }}';#}
-        {#                }#}
-        {#            });#}
-        {#        });#}
+        var $form = $("#photo-form");
+        var $photo = $form.children("#photo")[0];
+
+        function auto_submit_if_has_file() {
+            if ($photo.files.length > 0) {
+                $form.submit();
+            } else {
+                window.setTimeout(auto_submit_if_has_file, 500);
+            }
+        }
+
+        $(".add-button").click(function () {
+            $photo.click();
+            window.setTimeout(auto_submit_if_has_file, 500);
+        });
+
+        $(".photo-delete").click(function () {
+            var filename_to_be_del = $(this).siblings(".photo-name").text();
+            $.ajax({
+                type: "DELETE",
+                url: "{{ url_for('atd_photo', filename="name") }}".replace('name', filename_to_be_del),
+                success: function () {
+                    window.location.href = '{{ url_for("sjtuface.attendance") }}';
+                }
+            });
+        });
     </script>
 {% endblock %}
 

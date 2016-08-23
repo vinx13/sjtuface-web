@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # Created by BigFlower at 16/8/20
-import re, os, hashlib, string
+import os, hashlib, string
 
 # FIXME: where should I place this variable?
 UPLOAD_DIR = "sjtuface/static/uploads"
+ATTENDANCE_UPLOAD_DIR = "sjtuface/static/uploads_attendance"
 
 
 def is_image_file(filename, allowed_type):
@@ -16,8 +17,8 @@ def is_image_file(filename, allowed_type):
     is_image_file("abc.jpg", ["jpg", "jpeg", "png"])
     -> True
     """
-    #return re.match(r'^.+\.(%s)$' % ("|".join(allowed_type)), filename)
     return get_extension_name(filename) in allowed_type
+
 
 def md5(data):
     m = hashlib.md5()
@@ -36,12 +37,15 @@ def get_extension_name(filename):
     return string.lower(filename.split(".", 1)[-1])  #
 
 
-def delete_photo_file(filename):
+def delete_photo_file(filename, from_='u'):
     """
-    :param: filename: filename, extestion name included
+    :param filename: filename, extension name included
+    :param from_ : if 'u', delete from `UPLOAD_DIR`, else from 'ATTENDANCE_UPLOAD_DIR'
     """
-    if os.path.exists(filename):
-        os.remove(os.path.join(UPLOAD_DIR, filename))
+    base_dir = UPLOAD_DIR if from_ == 'u' else ATTENDANCE_UPLOAD_DIR
+    path = os.path.join(base_dir, filename)
+    if os.path.exists(path):
+        os.remove(path)
 
 
 def get_filename(file):

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div class="center-window">
+    <div class="center-window text-center" style="width: 30%">
         <h2>Login</h2>
         <form action="{{ url_for('sjtuface.login') }}" method="post">
             {{ form.csrf_token }}

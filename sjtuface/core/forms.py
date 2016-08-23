@@ -17,3 +17,7 @@ class PersonForm(Form):
 class PhotoForm(Form):
     person_id = StringField('id', validators=[DataRequired()])
     photo = FileField('photo')
+
+
+class AttendancePhotoForm(Form):
+    photo = FileField('photo')

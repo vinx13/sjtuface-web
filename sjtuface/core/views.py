@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -*-
 from flask import flash, Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
 from flask_login import current_user, login_required, login_user, logout_user
-from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm
-from sjtuface.core.models import db, User, Person, Photo
+from sjtuface.core.forms import LoginForm, PersonForm, PhotoForm, AttendancePhotoForm
+from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
 from utility import *
-from sjtuface import create_facepp
+
+# from sjtuface import create_facepp
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -127,12 +128,13 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-@bp.route('/train', methods=['POST'])
-def do_train():
-    print 'training'
-    facepp = create_facepp()
-    facepp.initialize()
-    return redirect(url_for('sjtuface.train'))
+#
+# @bp.route('/train', methods=['POST'])
+# def do_train():
+#     print 'training'
+# facepp = create_facepp()
+# facepp.initialize()
+# return redirect(url_for('sjtuface.train'))
 
 
 @bp.route('/train', methods=['GET'])
@@ -140,7 +142,34 @@ def train():
     return render_template('train.html')
 
 
-@bp.route('/attendance', methods=['GET'])
+@bp.route('/attendance', methods=['GET', 'POST'])
 def attendance():
+    errors = {}
+    if request.method == "POST":
+        form = AttendancePhotoForm()
+        img = form.photo.data
+
+        if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
+            errors.setdefault("photo", []).append("Only jpg/jpeg photo is accepted")
+        else:
+            # get file name
+            filename = get_filename(img)
+
+            # insert into db
+            photo_ = AttendancePhoto(filename, owner=current_user)
+            try:
+                db.session.add(photo_)
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+                errors.setdefault("photo", []).append("Picture already exists!")
+            else:
+                # save photo file
+                img.save(os.path.join(ATTENDANCE_UPLOAD_DIR, filename))
+
+    photo_names = map(lambda photo: photo.filename, current_user.photos)
     person_list = Person.query.all()
-    return render_template("attendence.html", person_list=person_list)
+
+    return render_template("attendence.html",
+                           person_list=person_list, photo_names=photo_names,
+                           form=AttendancePhotoForm(None), errors=errors)
