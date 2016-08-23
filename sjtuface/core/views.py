@@ -6,8 +6,7 @@ from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
 from utility import *
-
-# from sjtuface import create_facepp
+from sjtuface import create_facepp
 
 bp = Blueprint('sjtuface', __name__)
 
@@ -128,13 +127,12 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-#
-# @bp.route('/train', methods=['POST'])
-# def do_train():
-#     print 'training'
-# facepp = create_facepp()
-# facepp.initialize()
-# return redirect(url_for('sjtuface.train'))
+@bp.route('/train', methods=['POST'])
+def do_train():
+    print 'training'
+    facepp = create_facepp()
+    facepp.initialize()
+    return redirect(url_for('sjtuface.train'))
 
 
 @bp.route('/train', methods=['GET'])
