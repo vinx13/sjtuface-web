@@ -127,17 +127,14 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-@bp.route('/train', methods=['POST'])
-def do_train():
-    print 'training'
-    facepp = create_facepp()
-    facepp.initialize()
-    return redirect(url_for('sjtuface.train'))
-
-
-@bp.route('/train', methods=['GET'])
+@bp.route('/train', methods=['GET', 'POST'])
 def train():
-    return render_template('train.html')
+    if request.method == 'POST':
+        facepp = create_facepp()
+        facepp.initialize()
+        return redirect(url_for('sjtuface.train'))
+    elif request.method == 'GET':
+        return render_template('train.html')
 
 
 @bp.route('/attendance', methods=['GET', 'POST'])
