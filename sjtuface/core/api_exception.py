@@ -11,3 +11,7 @@ def api_error_type(e):
 
 class NameExistError(Exception):
     pass
+
+
+class NoFaceDetectedError(Exception):
+    pass

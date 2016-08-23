@@ -7,7 +7,7 @@ import facepp
 import os
 from .models import Person, Photo
 from utility import UPLOAD_DIR
-from api_exception import api_error_type, NameExistError
+from api_exception import api_error_type, NameExistError, NoFaceDetectedError
 from config import API_KEY, API_SECRET
 
 
@@ -23,7 +23,7 @@ class FaceRecognitionSys:
     """
 
     def __init__(self, group_name):
-        self.api = facepp.API(key=API_KEY,secret=API_SECRET)
+        self.api = facepp.API(key=API_KEY, secret=API_SECRET)
         self.group_name = group_name
 
     def initialize(self, reconstruct=True):
@@ -32,7 +32,6 @@ class FaceRecognitionSys:
         carry out face recognition.
         return unless training at facepp server finished.
 
-        :param db_img_dir: directory name of images used to construct face group
         :param reconstruct:
             if `True`:
                 if 'Group' or 'Person' with same name already exists at the server,
@@ -148,6 +147,8 @@ class FaceRecognitionSys:
         :return: a dict in the format of
             { <person_name> : [< a_str_of_face_id >, ...]
                 ...
+                ...
+              "failed" : [< failed_photo_path_1 >, < failed_photo_path_2 > ...]
             }
 
         """
@@ -158,7 +159,12 @@ class FaceRecognitionSys:
                 photo_path = os.path.join(UPLOAD_DIR, photo.filename)
                 print(photo_path)
                 photo_file = facepp.File(photo_path)
-                faces[person.name].append(self._detect_face(photo_file))
+                try:
+                    f_id = self._detect_face(photo_file)
+                except NoFaceDetectedError:
+                    print("{} failed!".format(photo_path))
+                else:
+                    faces[person.name].append(f_id)
 
         return faces
 
@@ -170,4 +176,8 @@ class FaceRecognitionSys:
         e.g.
         self._detect_face(facepp.File("database/1.jpg"))
         """
-        return self.api.detection.detect(post=True, img=img_file)['face'][0]['face_id']
+        ret = self.api.detection.detect(post=True, img=img_file)['face']
+        if len(ret) > 0:
+            return ret[0]['face_id']
+        else:
+            raise NoFaceDetectedError
