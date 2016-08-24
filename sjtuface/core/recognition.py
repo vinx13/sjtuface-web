@@ -44,7 +44,7 @@ class FaceRecognitionSys:
         print("reading database...")
         faces = self._get_db_faces()
         print(str(faces))
-        print("{} faces read".format(len(faces)))
+        print("{} faces read".format(sum(len(f) for f in faces.values())))
 
         print("Creating group..")
         self._create_group(self.group_name, reconstruct)
@@ -99,7 +99,6 @@ class FaceRecognitionSys:
         self.group_name = None
 
     def identify_new_face(self, path_to_image):
-        # TODO: unfinished
         ret = self.api.recognition.identify(group_name=self.group_name, post=True, img=facepp.File(path_to_image))
         ret = ret['face'][0]['candidate']
         print("Result of face identification to '{}'\nCandidates:".format(path_to_image))

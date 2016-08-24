@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from flask import Blueprint, render_template, redirect, url_for, request, abort, send_from_directory
+from flask import Blueprint, render_template, redirect, url_for, request, abort, send_from_directory, jsonify
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import check_password_hash
@@ -128,17 +128,15 @@ def added_face(person_id, filename):
     return send_from_directory(os.path.join(UPLOAD_DIR, person_id), filename)
 
 
-@bp.route('/train', methods=['GET', 'POST'])
+@bp.route('/api/train', methods=['POST'])
 def train():
-    if request.method == 'POST':
-        facepp = create_facepp()
-        facepp.initialize()
-        return redirect(url_for('sjtuface.train'))
-    elif request.method == 'GET':
-        return render_template('train.html')
+    facepp = create_facepp()
+    facepp.initialize()
+    return '', 200
 
 
 @bp.route('/attendance', methods=['GET', 'POST'])
+@login_required
 def attendance():
     errors = {}
     if request.method == "POST":
@@ -171,20 +169,32 @@ def attendance():
                            form=AttendancePhotoForm(None), errors=errors)
 
 
-@bp.route('/identify', methods=['GET', 'POST'])
+@bp.route('/api/identify', methods=['POST'])
 def identify():
-    form = IdentifyForm(request.form)
-    results = None
-    if form.validate_on_submit():
-        filename = form.photo.name
-        img = request.files[filename]
+    print('in')
+    facepp = create_facepp()
+    results = {}
+    for photo_ in AttendancePhoto.query.filter_by(owner_name=current_user.username):
+        path = os.path.join(ATTENDANCE_UPLOAD_DIR, photo_.filename)
+        ret = facepp.identify_new_face(path)
+        print(ret)
+        most_possible_one = find_outstanding_one(ret)
+        results[photo_.filename] = most_possible_one[u'person_name'] or u'uncertain'
+    print(results)
+    return jsonify(results), 200
 
-        if not is_image_file(img.filename, allowed_type=["jpg", "jpeg"]):
-            return  # TODO
 
-        path = os.path.join(UPLOAD_DIR, get_filename(img))
-        img.save(path)
-        facepp = create_facepp()
-        results = facepp.identify_new_face(path)
+def find_outstanding_one(lst, key=None, min_threshold=None, diff_threshold=None):
+    tmp = map(key, lst) if key else lst
 
-    return render_template('identify.html', form=form, results=results)
+    m = max(tmp)
+    if min_threshold and m < min_threshold:
+        return None
+
+    ind = tmp.index(m)
+    second_m = max(x for i, x in enumerate(tmp) if i != ind)
+
+    if diff_threshold and m - second_m < diff_threshold:
+        return None
+
+    return lst[ind]

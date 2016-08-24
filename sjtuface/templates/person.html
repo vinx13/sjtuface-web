@@ -33,7 +33,7 @@
             <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
         <div class="text-center">
-            <button class="btn btn-lg btn-info">
+            <button class="btn btn-lg btn-info" id="train-button">
                 开始训练
             </button>
         </div>
@@ -63,6 +63,7 @@
     <script>
         var $form = $("#person-form").first();
         var $add_btn = $(".add-button").first();
+        var $train_btn = $("#train-button");
 
         {% if errors %}
             // to display the error message
@@ -75,6 +76,16 @@
             $(this).toggleClass("rotated");
         });
 
+        $train_btn.click(function () {
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for("sjtuface.train") }}",
+                success: function () {
+                    alert("训练结束!");
+                },
+            });
+        });
+
         $(".person-name-tag-delete").click(function () {
             var id_to_be_del = $(this).siblings(".person-id").text();
 
@@ -84,9 +95,6 @@
                 success: function () {
                     window.location.href = '{{ url_for("sjtuface.person") }}';
                 },
-                error: function () {
-                    alert("failed!");
-                }
             });
 
         });

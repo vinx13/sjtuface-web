@@ -15,3 +15,12 @@
     width: 70%;
     margin-left: 30%;
 }
+
+.photo-detection-ret-prompt{
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    font-size: .3em;
+    color: #fff;
+    text-shadow: 0 0 5px #000;
+}

@@ -12,14 +12,15 @@
                     <th>出席</th>
                 </tr>
                 {% for p in person_list %}
-                    <tr>
+                    <tr data-person-name="{{ p.name }}">
                         <td>{{ p.id }}</td>
                         <td>{{ p.name }}</td>
-                        <td></td>
+                        <td><span class="glyphicon glyphicon-ok hidden"></span></td>
                     </tr>
                 {% endfor %}
             </table>
         </div>
+
         <div class="return-button" onclick="window.location.href = '{{ url_for("sjtuface.home") }}'">
             <span class="glyphicon glyphicon-arrow-left"></span> 返回
         </div>
@@ -30,9 +31,11 @@
 
         <div class="center-window-box photo-box">
             {% for name in photo_names %}
-                <div class="photo-thumbnail">
+                <div class="photo-thumbnail" data-filename="{{ name }}">
                     <img src="{{ url_for('static',filename='/'.join(['uploads_attendance', name])) }}">
-                    <span class="photo-name" hidden>{{ name }}</span>
+                    <span class="photo-detection-ret-prompt">
+                        未识别
+                    </span>
                     <span class="photo-delete">
                         <span class="glyphicon glyphicon-trash"></span>
                     </span>
@@ -50,7 +53,7 @@
         </form>
 
         <div class="text-center">
-            <button class="btn btn-info btn-lg" onclick="">开始考勤</button>
+            <button class="btn btn-info btn-lg" id="identify-button">开始考勤</button>
         </div>
     </div>
 {% endblock %}
@@ -71,6 +74,24 @@
         $(".add-button").click(function () {
             $photo.click();
             window.setTimeout(auto_submit_if_has_file, 500);
+        });
+
+
+        $("#identify-button").click(function () {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{ url_for('sjtuface.identify') }}",
+                success: function (msg) {
+                    alert("识别结束!");
+                    for (var filename in msg) {
+                        $(".attendance-list").find("tr[data-person-name='%s']".replace('%s', msg[filename]))
+                                .find("span.glyphicon").removeClass('hidden');
+                        $(".photo-thumbnail[data-filename='%s']".replace('%s', filename))
+                                .children(".photo-detection-ret-prompt").text(msg[filename]);
+                    }
+                }
+            });
         });
 
         $(".photo-delete").click(function () {
