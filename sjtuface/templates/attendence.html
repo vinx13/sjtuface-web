@@ -95,7 +95,8 @@
         });
 
         $(".photo-delete").click(function () {
-            var filename_to_be_del = $(this).siblings(".photo-name").text();
+            var filename_to_be_del = $(this).parent().attr("data-filename");
+            alert(filename_to_be_del);
             $.ajax({
                 type: "DELETE",
                 url: "{{ url_for('atd_photo', filename="name") }}".replace('name', filename_to_be_del),
