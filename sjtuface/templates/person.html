@@ -77,12 +77,14 @@
         });
 
         $train_btn.click(function () {
+            $train_btn.text("训练中...请耐心等待");
             $.ajax({
                 type: "POST",
                 url: "{{ url_for("sjtuface.train") }}",
                 success: function () {
                     alert("训练结束!");
-                },
+                    $train_btn.text("训练完成");
+                }
             });
         });
 
