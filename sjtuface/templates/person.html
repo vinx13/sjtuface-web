@@ -72,11 +72,14 @@
         {% endif %}
 
         $add_btn.click(function () {
+            $train_btn.attr("disabled", false);
+            $train_btn.text("开始训练");
             $form.slideToggle();
             $(this).toggleClass("rotated");
         });
 
         $train_btn.click(function () {
+            $train_btn.attr("disabled", true);
             $train_btn.text("训练中...请耐心等待");
             $.ajax({
                 type: "POST",
@@ -84,6 +87,10 @@
                 success: function () {
                     alert("训练结束!");
                     $train_btn.text("训练完成");
+                },
+                error: function () {
+                    alert("训练失败");
+                    $train_btn.text("训练失败,再次尝试");
                 }
             });
         });
