@@ -2,9 +2,9 @@
 # coding: utf-8
 from flask_script import Manager
 from sjtuface import create_app
-from sjtuface.core.models import db, User, Person, Photo,AttendancePhoto
+from sjtuface.core.models import db, User, Person, Photo, AttendancePhoto
 from werkzeug.security import generate_password_hash
-from sjtuface.core.utility import create_dir_if_not_exist, delete_photo_file, UPLOAD_DIR
+from sjtuface.core.utility import create_dir_if_not_exist, delete_photo_file, UPLOAD_DIR, ATTENDANCE_UPLOAD_DIR
 
 import os
 import shutil
@@ -17,9 +17,10 @@ manager = Manager(app)
 @manager.command
 def init():
     db.create_all()
-    if os.path.exists(UPLOAD_DIR):
-        shutil.rmtree(UPLOAD_DIR)
-    os.mkdir(UPLOAD_DIR)
+    for path in [UPLOAD_DIR, ATTENDANCE_UPLOAD_DIR]:
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        os.mkdir(path)
     create_db()
     create_default_group()
     seed()

@@ -114,6 +114,7 @@ def person_detail(person_id):
                 errors.setdefault("photo", []).append("Picture already exists!")
             else:
                 # save photo file
+                create_dir_if_not_exist(UPLOAD_DIR)
                 img.save(os.path.join(UPLOAD_DIR, filename))
 
     photo_names = map(lambda photo: photo.filename, person_.photos)
@@ -159,6 +160,7 @@ def attendance():
                 errors.setdefault("photo", []).append("Picture already exists!")
             else:
                 # save photo file
+                create_dir_if_not_exist(ATTENDANCE_UPLOAD_DIR)
                 img.save(os.path.join(ATTENDANCE_UPLOAD_DIR, filename))
 
     photo_names = map(lambda photo: photo.filename, current_user.photos)
