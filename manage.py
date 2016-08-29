@@ -49,9 +49,8 @@ def seed():
         db.session.delete(p)
 
     db.session.commit()
-    # names = [u"傅园慧", u"宁泽涛", u"张继科", u"张梦雪", u"林武威",
-    #          u"Obama", u"Hitler", u"Hillary", u"Jobs"]
-    names = [x for x in range(1, 10)]
+    names = [u"傅园慧", u"宁泽涛", u"张继科", u"张梦雪", u"林武威",
+             u"张杰", u"张杰(歌手)", u"刘强东"]
     person_list = [Person(unicode(i), unicode(n)) for i, n in zip(range(len(names)), names)]
     db.session.add_all(person_list)
     db.session.commit()
