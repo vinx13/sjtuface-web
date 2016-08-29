@@ -52,5 +52,5 @@ def get_filename(file):
     md5_ = md5(file.read())
     file.seek(0)
     ext = get_extension_name(file.filename)
-    filename = "{}.{}".format(md5_, ext)
+    filename = u"{}.{}".format(md5_, ext)
     return filename
