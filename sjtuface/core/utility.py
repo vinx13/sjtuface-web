@@ -54,3 +54,37 @@ def get_filename(file):
     ext = get_extension_name(file.filename)
     filename = u"{}.{}".format(md5_, ext)
     return filename
+
+
+def find_outstanding_one(lst, key=None, min_threshold=None, diff_threshold=None):
+    """
+    Find one outstanding item among a list
+    e.g.
+    f := find_outstanding_one
+    f([1,1,1,4,5]) -> 5
+    f([1,1,1,4,5], min_threshold=4) -> 5
+    f([1,1,1,4,5], min_threshold=6) -> None
+    f([1,1,1,4,5], diff_threshold=0.5) -> 5
+    f([1,1,1,4,5], diff_threshold=1) -> 5
+    f([1,1,1,4,5], diff_threshold=1.5) -> None
+
+    :param lst: a list / dict
+    :param key: a function applied to `lst`
+     find_outstanding_one(lst, key) = find_outstanding_one(map(key, lst))
+    :param min_threshold: the min value of the 'outstanding value'
+    :param diff_threshold: the min difference between the biggest and the second-biggest value
+    :return: the outstanding value or `None`
+    """
+    tmp = map(key, lst) if key else lst
+
+    m = max(tmp)
+    if min_threshold and m < min_threshold:
+        return None
+
+    ind = tmp.index(m)
+    second_m = max(x for i, x in enumerate(tmp) if i != ind)
+
+    if diff_threshold and m - second_m < diff_threshold:
+        return None
+
+    return lst[ind]

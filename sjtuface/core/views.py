@@ -130,6 +130,7 @@ def added_face(person_id, filename):
 
 
 @bp.route('/api/train', methods=['POST'])
+@login_required
 def train():
     facepp = create_facepp()
     facepp.initialize()
@@ -172,31 +173,14 @@ def attendance():
 
 
 @bp.route('/api/identify', methods=['POST'])
+@login_required
 def identify():
-    print('in')
     facepp = create_facepp()
     results = {}
     for photo_ in AttendancePhoto.query.filter_by(owner_name=current_user.username):
         path = os.path.join(ATTENDANCE_UPLOAD_DIR, photo_.filename)
         ret = facepp.identify_new_face(path)
-        print(ret)
         most_possible_one = find_outstanding_one(ret)
         results[photo_.filename] = most_possible_one[u'person_name'] or u'uncertain'
-    print(results)
+
     return jsonify(results), 200
-
-
-def find_outstanding_one(lst, key=None, min_threshold=None, diff_threshold=None):
-    tmp = map(key, lst) if key else lst
-
-    m = max(tmp)
-    if min_threshold and m < min_threshold:
-        return None
-
-    ind = tmp.index(m)
-    second_m = max(x for i, x in enumerate(tmp) if i != ind)
-
-    if diff_threshold and m - second_m < diff_threshold:
-        return None
-
-    return lst[ind]
