@@ -34,7 +34,7 @@
         </div>
         <div class="text-center">
             <button class="btn btn-lg btn-info" id="train-button">
-                开始训练
+                开始模拟
             </button>
         </div>
         <form id="person-form" class="form-inline" method="post" action="{{ url_for("sjtuface.person") }}" hidden>
@@ -73,24 +73,24 @@
 
         $add_btn.click(function () {
             $train_btn.attr("disabled", false);
-            $train_btn.text("开始训练");
+            $train_btn.text("开始模拟");
             $form.slideToggle();
             $(this).toggleClass("rotated");
         });
 
         $train_btn.click(function () {
             $train_btn.attr("disabled", true);
-            $train_btn.text("训练中...请耐心等待");
+            $train_btn.text("模拟中...请耐心等待");
             $.ajax({
                 type: "POST",
                 url: "{{ url_for("sjtuface.train") }}",
                 success: function () {
-                    alert("训练结束!");
-                    $train_btn.text("训练完成");
+                    alert("模拟结束!");
+                    $train_btn.text("模拟完成");
                 },
                 error: function () {
-                    alert("训练失败");
-                    $train_btn.text("训练失败,再次尝试");
+                    alert("模拟失败");
+                    $train_btn.text("模拟失败,再次尝试");
                 }
             });
         });

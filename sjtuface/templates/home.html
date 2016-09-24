@@ -5,13 +5,13 @@
 
 {% block body %}
     <div class="home-title text-center">
-        <h1 >SJTU人脸识别考勤系统</h1>
+        <h1 >SJTU人脸识别系统</h1>
         <div class="home-buttons">
             <button class="btn btn-info btn-lg"
                     onclick="window.location.href='{{ url_for("sjtuface.person") }}'">资料管理
             </button>
             <button class="btn btn-danger btn-lg"
-                    onclick="window.location.href='{{ url_for("sjtuface.attendance") }}'">开始考勤
+                    onclick="window.location.href='{{ url_for("sjtuface.attendance") }}'">开始识别
             </button>
         </div>
     </div>
