@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # Created by BigFlower at 16/8/20
-import os, hashlib, string
+import os, hashlib, string, time
 
 # FIXME: where should I place this variable?
-UPLOAD_DIR = "sjtuface/static/uploads"
-ATTENDANCE_UPLOAD_DIR = "sjtuface/static/uploads_attendance"
-
+UPLOAD_DIR = os.path.abspath("/root/sjtuface-web/sjtuface/static/uploads")
+ATTENDANCE_UPLOAD_DIR = os.path.abspath("/root/sjtuface-web/sjtuface/static/uploads_attendance")
 
 def is_image_file(filename, allowed_type):
     """
@@ -34,7 +33,7 @@ def create_dir_if_not_exist(dir_name, base_dir=""):
 
 
 def get_extension_name(filename):
-    return string.lower(filename.split(".", 1)[-1])  #
+    return string.lower(filename.split(".")[-1])  #
 
 
 def delete_photo_file(filename, from_='u'):
@@ -52,7 +51,7 @@ def get_filename(file):
     md5_ = md5(file.read())
     file.seek(0)
     ext = get_extension_name(file.filename)
-    filename = u"{}.{}".format(md5_, ext)
+    filename = u"{}{}.{}".format(md5_, time.time(), ext)
     return filename
 
 

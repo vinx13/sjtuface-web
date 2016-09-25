@@ -53,7 +53,7 @@
         </form>
 
         <div class="text-center">
-            <button class="btn btn-info btn-lg" id="identify-button">开始考勤</button>
+            <button class="btn btn-info btn-lg" id="identify-button">开始识别</button>
         </div>
     </div>
 {% endblock %}
@@ -90,7 +90,8 @@
                         $(".photo-thumbnail[data-filename='%s']".replace('%s', filename))
                                 .children(".photo-detection-ret-prompt").text(msg[filename]);
                     }
-                }
+                },
+                timeout: 1000 * 60 * 60
             });
         });
 

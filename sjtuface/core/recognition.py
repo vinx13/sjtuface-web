@@ -101,9 +101,9 @@ class FaceRecognitionSys:
     def identify_new_face(self, path_to_image):
         ret = self.api.recognition.identify(group_name=self.group_name, post=True, img=facepp.File(path_to_image))
         ret = ret['face'][0]['candidate']
-        print("Result of face identification to '{}'\nCandidates:".format(path_to_image))
-        for r in ret:
-            print(u"{}:\t{:.3f}%".format(r["person_name"], r["confidence"]))
+        #print("Result of face identification to '{}'\nCandidates:".format(path_to_image))
+        #for r in ret:
+        #    print(u"{}:\t{:.3f}%".format(r["person_name"], r["confidence"]))
         return ret
 
     def _create_group(self, group_name, remove_if_exist=True, **kwargs):
