@@ -62,7 +62,7 @@
     <script>
         var $form = $("#photo-form");
         var $photo = $form.children("#photo")[0];
-        var $identify_btn = $(#identify-button);
+        var $identify_btn = $("#identify-button");
 
         function auto_submit_if_has_file() {
             if ($photo.files.length > 0) {
@@ -77,22 +77,6 @@
             window.setTimeout(auto_submit_if_has_file, 500);
         });
 
-$train_btn.click(function () {
-            $identify_btn.attr("disabled", true);
-            $identify_btn.text("模拟中...请耐心等待");
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for("sjtuface.train") }}",
-                success: function () {
-                    alert("模拟结束!");
-                    $train_btn.text("模拟完成");
-                },
-                error: function () {
-                    alert("模拟失败");
-                    $train_btn.text("模拟失败,再次尝试");
-                }
-            });
-        });
         $identify_btn.click(function () {
             $identify_btn.attr("disabled", true);
             $identify_btn.text("识别中...请耐心等待");
