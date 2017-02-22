@@ -23,7 +23,7 @@ class FaceRecognitionSys:
     """
 
     def __init__(self, group_name):
-        self.api = facepp.API(key=API_KEY, secret=API_SECRET)
+        self.api = facepp.API(key=API_KEY, secret=API_SECRET, timeout=3000)
         self.group_name = group_name
 
     def initialize(self, reconstruct=True):
